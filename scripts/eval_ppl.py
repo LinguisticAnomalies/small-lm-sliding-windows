@@ -100,14 +100,9 @@ if __name__ == "__main__":
     pargs = parge_args()
     if pargs.avh:
         col = "text"
-        if pargs.ema:
-            output_path = f"../data/with-ema/pythia.jsonl"
-            label_df = pd.read_json(
-                path_or_buf="../data/manual_merged_ema.jsonl", lines=True)
-        else:
-            output_path = f"../data/no-ema/pythia.jsonl"
-            label_df = pd.read_json(
-                path_or_buf="../data/trans_baseline.jsonl", lines=True)
+        output_path = f"../data/no-ema/pythia.jsonl"
+        label_df = pd.read_json(
+            path_or_buf="../data/avh_tald.jsonl", lines=True)
     if pargs.ellen:
         col = "answer"
         output_path = f"../data/no-ema/pythia_ellen.jsonl"

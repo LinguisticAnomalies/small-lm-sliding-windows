@@ -17,10 +17,6 @@ def parge_args():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--ema", action="store_true",
-        help="""if set, then limit the records when there are matched EMA"""
-    )
-    parser.add_argument(
         "--avh", action="store_true",
         help="""indicator for using AVH dataset""")
     parser.add_argument(
@@ -232,7 +228,6 @@ def convert_to_linux_encoding(text):
 
 if __name__ == "__main__":
     pargs = parge_args()
-    prefix = "/edata/changye/avh-new/data"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_cards = ("EleutherAI/pythia-70m-deduped","EleutherAI/pythia-160m-deduped",
                    "EleutherAI/pythia-410m-deduped","EleutherAI/pythia-1b-deduped",
@@ -256,18 +251,10 @@ if __name__ == "__main__":
     if pargs.avh:
         suffix = "label"
         col = "text"
-        if pargs.ema:
-            label_df = pd.read_json(
-                        path_or_buf="../data/manual_merged_ema.jsonl", lines=True)
-        else:
-            label_df = pd.read_json(
-                        path_or_buf="../data/trans_baseline.jsonl", lines=True)
-    for model_card in model_cards:
-        for window_size in window_sizes:
-            if pargs.ema:
-                output_dir = f"../data/with-ema/sliding_windows/{window_size}/"
-            else:
-                output_dir = f"../data/no-ema/sliding_windows/{window_size}/"
+        label_df = pd.read_json("../data/avh_tald.jsonl", lines=True)
+    for window_size in window_sizes:
+        for model_card in model_cards:
+            output_dir = f"../data/no-ema/sliding_windows/{window_size}/"
             os.makedirs(output_dir, exist_ok=True)
             print(f"Calculating {model_card} for {window_size} PPL sliding windows")
             process_transcripts(label_df, model_card, col, device, 
